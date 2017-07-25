@@ -1,0 +1,94 @@
+group 'spiderdt'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'war'
+
+
+description = """"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenLocal ()
+    mavenCentral ()
+}
+
+dependencies {
+    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+//    compile group: 'javax.mail', name: 'mail', version: '1.4.7'
+
+    compile "org.spiderdt.groovy.modules.http-builder:http-builder:0.7.3-SNAPSHOT"
+
+
+    testCompile 'junit:junit:4.12'
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
+
+    // 日志
+    compile 'ch.qos.logback:logback-classic:1.2.1'
+    compile 'org.logback-extensions:logback-ext-spring:0.1.4'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.22'
+
+    // 缓存
+    compile 'net.sf.ehcache:ehcache:2.10.3'
+
+    // JSON
+    compile 'org.json:json:20160810'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.8.2'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.1'
+
+    compile 'org.springframework:spring-core:4.3.4.RELEASE'
+    compile 'org.springframework:spring-beans:4.3.4.RELEASE'
+    compile 'org.springframework:spring-tx:4.3.4.RELEASE'
+    compile 'org.springframework:spring-aop:4.3.4.RELEASE'
+    compile 'org.springframework:spring-jdbc:4.3.4.RELEASE'
+    compile 'org.springframework:spring-context:4.3.4.RELEASE'
+    compile 'org.springframework:spring-context-support:4.3.4.RELEASE'
+    compile 'org.springframework:spring-expression:4.3.4.RELEASE'
+    compile 'org.springframework:spring-web:4.3.4.RELEASE'
+    compile 'org.springframework:spring-webmvc:4.3.4.RELEASE'
+    compile 'org.springframework:spring-test:4.3.4.RELEASE'
+    compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+
+    // 验证码
+    compile 'com.github.penggle:kaptcha:2.3.2'
+
+    // 校验器
+    compile 'org.hibernate:hibernate-validator:5.4.1.Final'
+    compile 'org.glassfish:javax.el:3.0.1-b08'
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.25.1'
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-common', version: '2.25.1'
+
+
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+
+
+    compile 'org.mybatis:mybatis:3.4.1'
+    compile 'org.mybatis:mybatis-spring:1.3.1'
+    compile group: 'com.alibaba', name: 'druid', version: '1.0.31'
+    // Swagger
+    compile 'com.mangofactory:swagger-springmvc:1.0.2'
+
+}
+
+
+def env = System.getProperty("profile") ?: "dev"
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "src/main/filters/$env"]
+        }
+    }
+}
+
+war {
+    archiveName "gradle-demo.war"
+}

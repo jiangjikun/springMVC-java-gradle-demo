@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+    <!-- 默认缓存 -->
+    <defaultCache
+            maxEntriesLocalHeap="1000"
+            eternal="false"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
+            memoryStoreEvictionPolicy="LRU"
+            copyOnRead="true"
+            copyOnWrite="true">
+    </defaultCache>
+
+    <cache name="ListData"
+           maxEntriesLocalHeap="1000"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LRU">
+           <!--copyOnRead="true"-->
+           <!--copyOnWrite="true">-->
+    </cache>
+
+    <!-- 验证码缓存 -->
+    <cache name="Captcha"
+           maxEntriesLocalHeap="100000"
+           eternal="false"
+           timeToIdleSeconds="120"
+           timeToLiveSeconds="120"
+           memoryStoreEvictionPolicy="FIFO">
+    </cache>
+    <!--用户<->数据源 对应缓存-->
+    <cache name="Source"
+           maxEntriesLocalHeap="100000"
+           eternal="false"
+           timeToIdleSeconds="36000"
+           timeToLiveSeconds="36000"
+           memoryStoreEvictionPolicy="FIFO">
+    </cache>
+
+    <!-- 锁定用户账号缓存 10 次错误登录锁定 1 小时 -->
+    <cache name="Lockout"
+           maxEntriesLocalHeap="10000"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="FIFO">
+    </cache>
+
+</ehcache>

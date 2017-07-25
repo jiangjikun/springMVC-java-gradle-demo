@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:cache="http://www.springframework.org/schema/cache"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<mvc:annotation-driven validator="validator"/>
+	<!--<context:component-scan base-package="com.spiderdt.jupiter.controller"/>-->
+	<!--<context:component-scan base-package="com.spiderdt.jupiter.service"/>-->
+	<!--<context:component-scan base-package="com.spiderdt.jupiter.exception"/>-->
+	<!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/>-->
+
+	<!--&lt;!&ndash;<bean class="org.json.JSONObject" scope="prototype"/>&ndash;&gt;-->
+	<!--<bean class="com.spiderdt.jupiter.util.PasswordValidator"/>-->
+
+
+
+	<!--<bean class="com.spiderdt.jupiter.builder.CustomHttpbuilder">-->
+	<!--<constructor-arg name="uri" value="${ip.chainAddress}"/>-->
+	<!--<constructor-arg name="poolSize" value="${asyncHttpBuilder.poolSize}"/>-->
+	<!--<constructor-arg name="timeout" value="${asyncHttpBuilder.timeout}"/>-->
+	<!--</bean>-->
+	<bean id="TokenFilter" class="com.spiderdt.mars.filter.TokenFilter"/>
+
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcache"/>
+	</bean>
+	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:cache/ehcache.xml"/>
+		<property name="shared" value="true"/>
+	</bean>
+	<!--<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">-->
+	<!--<property name="caches">-->
+	<!--<set>-->
+	<!--<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean">-->
+	<!--<property name="name" value="default"/>-->
+	<!--</bean>-->
+	<!--<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean">-->
+	<!--<property name="name" value="ListData"/>-->
+	<!--</bean>-->
+	<!--</set>-->
+	<!--</property>-->
+	<!--</bean>-->
+
+	<cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/>
+
+	<context:annotation-config/>
+
+
+	<!-- 处理请求时返回json字符串的中文乱码问题 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+				<property name="writeAcceptCharset" value="false"/>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+
+	<!-- 验证码 -->
+
+	<!-- 配置kaptcha -->
+	<!--kaptcha.border  是否有边框  默认为true  我们可以自己设置yes，no-->
+	<!--kaptcha.border.color   边框颜色   默认为Color.BLACK-->
+	<!--kaptcha.border.thickness  边框粗细度  默认为1-->
+	<!--kaptcha.producer.impl   验证码生成器  默认为DefaultKaptcha-->
+	<!--kaptcha.textproducer.impl   验证码文本生成器  默认为DefaultTextCreator-->
+	<!--kaptcha.textproducer.char.string   验证码文本字符内容范围  默认为abcde2345678gfynmnpwx-->
+	<!--kaptcha.textproducer.char.length   验证码文本字符长度  默认为5-->
+	<!--kaptcha.textproducer.font.names    验证码文本字体样式  默认为new Font("Arial", 1, fontSize), new Font("Courier", 1, fontSize)-->
+	<!--kaptcha.textproducer.font.size   验证码文本字符大小  默认为40-->
+	<!--kaptcha.textproducer.font.color  验证码文本字符颜色  默认为Color.BLACK-->
+	<!--kaptcha.textproducer.char.space  验证码文本字符间距  默认为2-->
+	<!--kaptcha.noise.impl    验证码噪点生成对象  默认为DefaultNoise-->
+	<!--kaptcha.noise.color   验证码噪点颜色   默认为Color.BLACK-->
+	<!--kaptcha.obscurificator.impl   验证码样式引擎  默认为WaterRipple-->
+	<!--kaptcha.word.impl   验证码文本字符渲染   默认为DefaultWordRenderer-->
+	<!--kaptcha.background.impl   验证码背景生成器   默认为DefaultBackground-->
+	<!--kaptcha.background.clear.from   验证码背景颜色渐进   默认为Color.LIGHT_GRAY-->
+	<!--kaptcha.background.clear.to   验证码背景颜色渐进   默认为Color.WHITE-->
+	<!--kaptcha.image.width   验证码图片宽度  默认为200-->
+	<!--kaptcha.image.height  验证码图片高度  默认为50-->
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<prop key="kaptcha.border">yes</prop>
+						<prop key="kaptcha.border.color">105,179,90</prop>
+						<prop key="kaptcha.image.width">150</prop>
+						<prop key="kaptcha.image.height">70</prop>
+						<prop key="kaptcha.textproducer.font.size">45</prop>
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- 配置校验器 -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<!-- 校验器，使用hibernate校验器 -->
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+		<!-- 指定校验使用的资源文件，在文件中配置校验错误信息，如果不指定则默认使用classpath下面的ValidationMessages.properties文件 -->
+		<property name="validationMessageSource" ref="messageSource"/>
+	</bean>
+	<!-- 校验错误信息配置文件 -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<!-- 资源文件名 -->
+		<property name="basenames">
+			<list>
+				<value>messages/ValidationMessages</value>
+				<value>org/hibernate/validator/ValidationMessages</value>
+			</list>
+		</property>
+		<property name="useCodeAsDefaultMessage" value="false"/>
+		<!-- 资源文件编码格式 -->
+		<property name="fileEncodings" value="utf-8"/>
+		<!-- 对资源文件内容缓存时间，单位秒 -->
+		<property name="cacheSeconds" value="120"/>
+	</bean>
+	<!-- http client bean -->
+	<!--<bean id="httpClientService" class="com.spiderdt.mars.service.HttpClientService">-->
+		<!--<constructor-arg name="host" value="${http.host}"/>-->
+		<!--<constructor-arg name="poolsize" value="${http.poolsize}"/>-->
+	<!--</bean>-->
+	<bean id="slog" class="com.spiderdt.mars.util.Slog" >
+	</bean>
+	<!-- JavaMail相关配置 -->
+	<!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl" >-->
+		<!--<property name="host" value="${rules.host}"></property>-->
+		<!--<property name="username" value="${rules.username}"></property>-->
+		<!--<property name="password" value="${rules.password}"></property>-->
+		<!--<property name="protocol" value="${rules.protocol}"></property>-->
+		<!--<property name="defaultEncoding" value="utf-8"></property>-->
+		<!--<property name="javaMailProperties">-->
+			<!--<props>-->
+				<!--<prop key="mail.smtp.auth">true</prop>-->
+				<!--&lt;!&ndash;<prop key="mail.smtp.from">13458555648@163.com</prop>&ndash;&gt;-->
+				<!--<prop key="mail.debug">true</prop>-->
+				<!--&lt;!&ndash;<prop key="mail.transport.protocol">smtp</prop>&ndash;&gt;-->
+				<!--<prop key="mail.smtp.starttls.enable">true</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
+
+	<bean id="sredis" class="com.spiderdt.mars.util.Sredis" >
+		<constructor-arg name="host" value ="${redis.host}"/>
+		<constructor-arg name="port" value ="${redis.port}"/>
+		<constructor-arg name="timeout" value ="${redis.timeout}"/>
+		<constructor-arg name="prefix" value ="${redis.prefix}"/>
+	</bean>
+
+	<!--<mvc:interceptors>-->
+		<!--<mvc:interceptor>-->
+			<!--<mvc:mapping path="/**" />-->
+			<!--<bean class="com.spiderdt.mars.interceptors.ChronosHandlerIntercepor" />-->
+		<!--</mvc:interceptor>-->
+	<!--</mvc:interceptors>-->
+
+	<!--<bean class="com.spiderdt.mars.swagger.configuration.SwaggerConfig" />-->
+	<!--<bean class="com.mangofactory.swagger.configuration.SpringSwaggerConfig"/>-->
+
+	 <!--直接访问的静态文件-->
+	<mvc:resources location='WEB-INF/swagger/' mapping="/swagger/**"/>
+</beans>
